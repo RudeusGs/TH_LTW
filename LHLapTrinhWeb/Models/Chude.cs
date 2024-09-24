@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LHLapTrinhWeb.Models;
+﻿namespace LHLapTrinhWeb.Models;
 
 public partial class Chude
 {

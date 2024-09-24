@@ -32,6 +32,5 @@ public partial class Sach
     public virtual Chude? MaCdNavigation { get; set; }
 
     public virtual Nhaxuatban? MaNxbNavigation { get; set; }
-
     public virtual ICollection<Vietsach> Vietsaches { get; set; } = new List<Vietsach>();
 }
