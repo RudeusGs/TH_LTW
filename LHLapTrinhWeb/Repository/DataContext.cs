@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using LHLapTrinhWeb.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace LHLapTrinhWeb.Models;
+namespace LHLapTrinhWeb.Repository;
 
 public partial class DataContext : DbContext
 {
@@ -33,7 +34,7 @@ public partial class DataContext : DbContext
 
     public virtual DbSet<Sach> Saches { get; set; }
 
-    public virtual DbSet<Tacgium> Tacgia { get; set; }
+    public virtual DbSet<Tacgia> Tacgia { get; set; }
 
     public virtual DbSet<Thamdo> Thamdos { get; set; }
 
@@ -247,7 +248,7 @@ public partial class DataContext : DbContext
                 .HasConstraintName("FK_Sach_NhaXuatBan");
         });
 
-        modelBuilder.Entity<Tacgium>(entity =>
+        modelBuilder.Entity<Tacgia>(entity =>
         {
             entity.HasKey(e => e.MaTg).HasName("PK_TacGia");
 

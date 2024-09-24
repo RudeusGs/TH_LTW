@@ -1,0 +1,19 @@
+﻿@model IEnumerable<LHLapTrinhWeb.Models.Sach>
+
+<div class="container">
+    <div class="row">
+        @foreach (var sach in Model)
+        {
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem; margin-bottom: 20px;">
+                    <img src="@Url.Content($"~/image/Sach/{sach.HinhMinhHoa}")" class="card-img-top" alt="@sach.TenSach">
+                    <div class="card-body">
+                        <h5 class="card-title">@sach.TenSach</h5>
+                        <p class="card-text">Giá: @sach.DonGia?.ToString("C")</p>
+                        <a href="#" class="btn btn-primary">Thêm</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

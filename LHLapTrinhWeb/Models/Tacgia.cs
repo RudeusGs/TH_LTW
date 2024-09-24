@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LHLapTrinhWeb.Models;
 
-public partial class Tacgium
+public partial class Tacgia
 {
     public int MaTg { get; set; }
 

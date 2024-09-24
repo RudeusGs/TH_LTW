@@ -13,5 +13,5 @@ public partial class Vietsach
 
     public virtual Sach MaSachNavigation { get; set; } = null!;
 
-    public virtual Tacgium MaTgNavigation { get; set; } = null!;
+    public virtual Tacgia MaTgNavigation { get; set; } = null!;
 }

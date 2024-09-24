@@ -1,3 +1,6 @@
+using LHLapTrinhWeb.Repository;
+using Microsoft.EntityFrameworkCore;
+
 namespace LHLapTrinhWeb
 {
     public class Program
@@ -5,9 +8,11 @@ namespace LHLapTrinhWeb
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddDbContext<DataContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
             var app = builder.Build();
 
@@ -28,7 +33,7 @@ namespace LHLapTrinhWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Sach}/{action=BookList}/{id?}");
 
             app.Run();
         }
