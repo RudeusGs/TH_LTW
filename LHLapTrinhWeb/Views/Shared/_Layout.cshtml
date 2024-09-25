@@ -1,4 +1,4 @@
-﻿@using LHLapTrinhWeb.Controllers
+﻿﻿@using LHLapTrinhWeb.Controllers
 @using LHLapTrinhWeb.Models
 @* @{
     var sachList = ViewData["SachList"] as IEnumerable<Sach>;
@@ -55,13 +55,16 @@
                         </form>
                         <div class="user-icons d-flex mb-2">
                             <div class="cart"><i class="fas fa-bell"></i></div>
-							<div class="cart"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="wishlist"><i class="fas fa-heart"></i></div>                           
-                            <div class="profile"><i class="fas fa-user"></i></div>
+                            <div class="cart"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="wishlist"><i class="fas fa-heart"></i></div>
+                            <div class="profile">
+                                <a asp-controller="Khachhang" asp-action="Login"><i class="fas fa-user"></i></a>
+                            </div>
+
                         </div>
                     </div>
                 </ul>
-                
+
                 <div class="contact-info d-md-flex">
                     <p>+0392822440 | ngotrannguyenquan1908@gmail.com </p>
                     <div class="github-profile">
@@ -73,12 +76,12 @@
         </div>
     </nav>
     <div class="container">
-            @RenderBody()
+        @RenderBody()
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - LHLapTrinhWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="containe d-flex justify-content-center">
+            &copy; 2024 - LHLapTrinhWeb - <a asp-area="" asp-controller="Sach" asp-action="BookList">Home</a>
         </div>
     </footer>
     <script src="https://kit.fontawesome.com/009f5df1e0.js" crossorigin="anonymous"></script>

@@ -1,19 +1,183 @@
 ﻿@model IEnumerable<LHLapTrinhWeb.Models.Sach>
 
-<div class="container">
-    <div class="row">
-        @foreach (var sach in Model)
+<div class="container d-flex justify-content-center mt-5">
+    <div class="d-flex align-items-start">
+        <!-- Carousel -->
+        <div id="carouselControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="7000">
+            <div class="carousel-inner rounded">
+                <div class="carousel-item active">
+                    <img class="d-block" src="./image/sl1.png" alt="First slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block" src="./image/sl2.png" alt="Second slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block" src="./image/sl3.png" alt="Third slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block" src="./image/sl4.png" alt="Fourth slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block" src="./image/sl5.png" alt="Fifth slide">
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselControls" role="button" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselControls" role="button" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </a>
+        </div>
+
+        <!-- Banner -->
+        <div class="align-content-center justify-content-lg-start ms-2">
+            <div>
+                <img style="height: 156px; width: 329px" class="rounded" src="./image/sl1.png">
+            </div>
+            <div style="margin-top: 6px;">
+                <img style="height: 156px; width: 329px" class="rounded" src="./image/sl5.png">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5">
+    <div class="row text-center">
+        <div class="col">
+            <img src="./image/icon1.png" alt="Icon 1" class="img-fluid">
+            <p>MCBooks</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon2.png" alt="Icon 2" class="img-fluid">
+            <p>MCBooks</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon3.png" alt="Icon 3" class="img-fluid">
+            <p>Balo</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon4.png" alt="Icon 4" class="img-fluid">
+            <p>Sản phẩm</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon5.png" alt="Icon 5" class="img-fluid">
+            <p>Manga</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon6.png" alt="Icon 6" class="img-fluid">
+            <p>Flash Sale</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon7.png" alt="Icon 7" class="img-fluid">
+            <p>Mã giảm giá</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon8.png" alt="Icon 8" class="img-fluid">
+            <p>Back to school</p>
+        </div>
+        <div class="col">
+            <img src="./image/icon9.png" alt="Icon 9" class="img-fluid">
+            <p>Phiên chợ</p>
+        </div>
+    </div>
+</div>
+<h3 class="text-center mt-3">Sách bán chạy</h3>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        @foreach (var sach in Model.Take(6))
         {
-            <div class="col-md-4">
-                <div class="card" style="width: 18rem; margin-bottom: 20px;">
-                    <img src="@Url.Content($"~/image/Sach/{sach.HinhMinhHoa}")" class="card-img-top" alt="@sach.TenSach">
-                    <div class="card-body">
-                        <h5 class="card-title">@sach.TenSach</h5>
+            <div class="col-md-4 mb-4 d-flex justify-content-center">
+                <div class="card" style="width: 447px; height: 319px; margin: 5px;">
+                    <div class="d-flex justify-content-center" style="height: 144px;">
+                        <img src="@Url.Content($"~/image/Sach/{sach.HinhMinhHoa}")"
+                             class="card-img-top"
+                             alt="@sach.TenSach"
+                             style="height: 100%; width: auto; object-fit: cover;">
+                    </div>
+                    <div class="card-body" style="height: calc(319px - 144px); position: relative;">
+                        <h5 class="card-title" style="font-size: 1.2rem;">@sach.TenSach</h5>
                         <p class="card-text">Giá: @sach.DonGia?.ToString("C")</p>
-                        <a href="#" class="btn btn-primary">Thêm</a>
+                        <a href="#" class="btn btn-secondary" style="position: absolute; bottom: 10px; right: 10px;">Thêm</a>
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#carouselControls').carousel({
+            interval: 7000,
+            ride: 'carousel',
+            pause: "hover",
+            wrap: true
+        });
+
+        const carouselElement = document.querySelector('#carouselControls');
+        const handleCarouselSlide = (direction) => {
+            const carouselItems = carouselElement.querySelectorAll('.carousel-item');
+            const activeItem = carouselElement.querySelector('.active');
+
+            let nextIndex = [...carouselItems].indexOf(activeItem) + (direction === 'next' ? 1 : -1);
+            if (nextIndex < 0) nextIndex = carouselItems.length - 1;
+            if (nextIndex >= carouselItems.length) nextIndex = 0;
+
+            const nextItem = carouselItems[nextIndex];
+            nextItem.classList.add(direction === 'next' ? 'slide-in-left' : 'slide-in-right');
+            activeItem.classList.add(direction === 'next' ? 'slide-out-right' : 'slide-out-left');
+            setTimeout(() => {
+                activeItem.classList.remove('active', direction === 'next' ? 'slide-out-right' : 'slide-out-left');
+                nextItem.classList.remove('slide-in-left', 'slide-in-right');
+                nextItem.classList.add('active');
+            }, 500);
+        };
+
+        carouselElement.querySelector('.carousel-control-prev').addEventListener('click', () => handleCarouselSlide('prev'));
+        carouselElement.querySelector('.carousel-control-next').addEventListener('click', () => handleCarouselSlide('next'));
+    });
+</script>
+
+<style>
+    .img-fluid {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: #333;
+    .slide-in-left {
+        animation: slideInLeft 0.5s forwards;
+    }
+
+    .slide-in-right {
+        animation: slideInRight 0.5s forwards;
+    }
+
+    .slide-out-left {
+        animation: slideOutLeft 0.5s forwards;
+    }
+
+    .slide-out-right {
+        animation: slideOutRight 0.5s forwards;
+    }
+
+    .carousel-item {
+        display: none;
+        transition: transform 0.5s ease-in-out;
+    }
+
+        .carousel-item.active {
+            display: block;
+        }
+
+</style>

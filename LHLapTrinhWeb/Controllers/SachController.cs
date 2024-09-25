@@ -14,7 +14,10 @@ public class SachController : Controller
 
     public IActionResult BookList()
     {
-        var sach = _dataContext.Saches.ToList();
-        return View(sach);
+            var sach = _dataContext.Saches
+                .OrderByDescending(s => s.SoLuongBan)
+                .ToList();
+
+            return View(sach);
     }
 }
