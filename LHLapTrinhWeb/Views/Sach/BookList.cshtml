@@ -1,5 +1,8 @@
 ﻿@model IEnumerable<LHLapTrinhWeb.Models.Sach>
-
+@{
+    
+    bool hasSelectedTopic = ViewBag.HasSelectedTopic;
+}
 <div class="container d-flex justify-content-center mt-5">
     <div class="d-flex align-items-start">
         <!-- Carousel -->
@@ -83,7 +86,14 @@
     </div>
 </div>
 <div class="container mt-5">
-    <h3 class="text-center mt-3">Sách bán chạy</h3>
+    @if (hasSelectedTopic)
+    {
+        <h3 class="text-center mt-3">Sách theo chủ đề</h3>
+    }
+    else{
+        <h3 class="text-center mt-3">Sách bán chạy</h3>
+    }
+    
     <div class="row justify-content-center">
         @foreach (var sach in Model.Take(6))
         {
