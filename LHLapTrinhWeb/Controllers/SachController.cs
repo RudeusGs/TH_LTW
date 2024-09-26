@@ -12,12 +12,30 @@ public class SachController : Controller
         _dataContext = dataContext;
     }
 
-    public IActionResult BookList()
+    public async Task<IActionResult> BookList(int? MaCd = null, int? MaNxb = null)
     {
-            var sach = _dataContext.Saches
-                .OrderByDescending(s => s.SoLuongBan)
-                .ToList();
+        IQueryable<Sach> query = _dataContext.Saches.Include(s => s.MaCdNavigation).Include(s => s.MaNxbNavigation);
 
-            return View(sach);
+        if (MaCd.HasValue)
+        {
+            query = query.Where(s => s.MaCd == MaCd.Value);
+        }
+
+        if (MaNxb.HasValue)
+        {
+            query = query.Where(s => s.MaNxb == MaNxb.Value);
+        }
+
+        var books = await query.ToListAsync();
+        return View(books);
+    }
+public IActionResult Detail(int id)
+    {
+        var sach = _dataContext.Saches.Find(id); 
+        if (sach == null)
+        {
+            return NotFound();
+        }
+        return View(sach);
     }
 }

@@ -2,5 +2,9 @@
 
 @foreach (var item in Model)
 {
-    <li><a class="dropdown-item" href="#">@item.TenChuDe</a></li>
+    <li>
+        <a class="dropdown-item" asp-area="" asp-controller="Sach" asp-action="BookList" asp-route-maCd="@item.MaCd">
+            @item.TenChuDe
+        </a>
+    </li>
 }

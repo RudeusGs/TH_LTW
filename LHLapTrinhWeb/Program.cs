@@ -1,4 +1,4 @@
-using LHLapTrinhWeb.Repository;
+﻿using LHLapTrinhWeb.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace LHLapTrinhWeb
@@ -8,19 +8,29 @@ namespace LHLapTrinhWeb
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Thêm DbContext với SqlServer
             builder.Services.AddDbContext<DataContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            // Add services to the container.
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Thêm dịch vụ cho các controller và Razor Pages
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
+            // Thêm dịch vụ Session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian timeout của session
+                options.Cookie.HttpOnly = true; // Chỉ cho phép truy cập cookie qua HTTP
+                options.Cookie.IsEssential = true; // Cookie này cần thiết cho ứng dụng
+            });
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Cấu hình HTTP request pipeline
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -28,6 +38,9 @@ namespace LHLapTrinhWeb
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            // Sử dụng Session
+            app.UseSession();
 
             app.UseAuthorization();
 

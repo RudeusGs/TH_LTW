@@ -15,10 +15,9 @@ namespace LHLapTrinhWeb.Controllers
             _logger = logger;
             _dataContext = dataContext;
         }
-        public IActionResult Index()
+        public IActionResult About()
         {
-            var sach = _dataContext.Chudes.ToList();
-            return View(sach);
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
