@@ -82,8 +82,8 @@
         </div>
     </div>
 </div>
-<h3 class="text-center mt-3">Sách bán chạy</h3>
 <div class="container mt-5">
+    <h3 class="text-center mt-3">Sách bán chạy</h3>
     <div class="row justify-content-center">
         @foreach (var sach in Model.Take(6))
         {
@@ -98,7 +98,7 @@
                     <div class="card-body" style="height: calc(319px - 144px); position: relative;">
                         <h5 class="card-title" style="font-size: 1.2rem;">@sach.TenSach</h5>
                         <p class="card-text">Giá: @sach.DonGia?.ToString("C")</p>
-                        <a href="#" class="btn btn-secondary" style="position: absolute; bottom: 10px; right: 10px;">Thêm</a>
+                        <a href="@Url.Action("Detail", "Sach", new { id = sach.MaSach })" class="btn btn-secondary" style="position: absolute; bottom: 10px; right: 10px;">Xem chi tiết</a>
                     </div>
                 </div>
             </div>
@@ -106,78 +106,3 @@
     </div>
 </div>
 
-
-
-
-
-
-<script>
-    $(document).ready(function () {
-        $('#carouselControls').carousel({
-            interval: 7000,
-            ride: 'carousel',
-            pause: "hover",
-            wrap: true
-        });
-
-        const carouselElement = document.querySelector('#carouselControls');
-        const handleCarouselSlide = (direction) => {
-            const carouselItems = carouselElement.querySelectorAll('.carousel-item');
-            const activeItem = carouselElement.querySelector('.active');
-
-            let nextIndex = [...carouselItems].indexOf(activeItem) + (direction === 'next' ? 1 : -1);
-            if (nextIndex < 0) nextIndex = carouselItems.length - 1;
-            if (nextIndex >= carouselItems.length) nextIndex = 0;
-
-            const nextItem = carouselItems[nextIndex];
-            nextItem.classList.add(direction === 'next' ? 'slide-in-left' : 'slide-in-right');
-            activeItem.classList.add(direction === 'next' ? 'slide-out-right' : 'slide-out-left');
-            setTimeout(() => {
-                activeItem.classList.remove('active', direction === 'next' ? 'slide-out-right' : 'slide-out-left');
-                nextItem.classList.remove('slide-in-left', 'slide-in-right');
-                nextItem.classList.add('active');
-            }, 500);
-        };
-
-        carouselElement.querySelector('.carousel-control-prev').addEventListener('click', () => handleCarouselSlide('prev'));
-        carouselElement.querySelector('.carousel-control-next').addEventListener('click', () => handleCarouselSlide('next'));
-    });
-</script>
-
-<style>
-    .img-fluid {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 10px;
-    }
-
-    p {
-        margin: 0;
-        font-size: 14px;
-        color: #333;
-    .slide-in-left {
-        animation: slideInLeft 0.5s forwards;
-    }
-
-    .slide-in-right {
-        animation: slideInRight 0.5s forwards;
-    }
-
-    .slide-out-left {
-        animation: slideOutLeft 0.5s forwards;
-    }
-
-    .slide-out-right {
-        animation: slideOutRight 0.5s forwards;
-    }
-
-    .carousel-item {
-        display: none;
-        transition: transform 0.5s ease-in-out;
-    }
-
-        .carousel-item.active {
-            display: block;
-        }
-
-</style>

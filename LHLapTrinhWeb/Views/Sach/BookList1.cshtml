@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Sach>
+
+<h1>Book List</h1>
+<div class="row">
+    @foreach (var sach in Model)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <img src="@Url.Content($"~/image/Sach/{sach.HinhMinhHoa}")" class="card-img-top" alt="@sach.TenSach">
+                <div class="card-body">
+                    <h5 class="card-title">@sach.TenSach</h5>
+                    <p class="card-text">@sach.MoTa</p>
+                    <p class="card-text"><small class="text-muted">@sach.DonGia?.ToString("C")</small></p>
+                    <a href="#" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
