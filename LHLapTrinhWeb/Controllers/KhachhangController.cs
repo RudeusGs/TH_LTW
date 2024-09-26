@@ -62,5 +62,29 @@ namespace LHLapTrinhWeb.Controllers
 
             return View(customer);
         }
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(Khachhang model)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingUser = await _dataContext.Khachhangs
+                    .FirstOrDefaultAsync(kh => kh.TenDn == model.TenDn);
+
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("TenDn", "Tên đăng nhập đã tồn tại.");
+                    return View(model);
+                }
+                await _dataContext.Khachhangs.AddAsync(model);
+                await _dataContext.SaveChangesAsync();
+                return RedirectToAction("FormLogin", "Khachhang");
+            }
+
+            return View(model);
+        }
     }
 }

@@ -12,10 +12,10 @@ public class SachController : Controller
         _dataContext = dataContext;
     }
 
-    public async Task<IActionResult> BookList(int? MaCd = null, int? MaNxb = null)
+    public async Task<IActionResult> BookList(bool isTopicSelected, int? MaCd = null, int? MaNxb = null)
     {
         IQueryable<Sach> query = _dataContext.Saches.Include(s => s.MaCdNavigation).Include(s => s.MaNxbNavigation);
-
+        ViewBag.HasSelectedTopic = isTopicSelected;
         if (MaCd.HasValue)
         {
             query = query.Where(s => s.MaCd == MaCd.Value);
