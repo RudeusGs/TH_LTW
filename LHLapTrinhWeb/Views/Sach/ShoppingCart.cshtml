@@ -1,0 +1,100 @@
+﻿@model List<LHLapTrinhWeb.Models.Sach>
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">@ViewData["Title"]</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Giỏ hàng của bạn đang trống.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-rounded">
+                <thead class="table-primary">
+                    <tr class="text-center">
+                        <th>Ảnh</th>
+                        <th>Tên sách</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Tổng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sach in Model)
+                    {
+                        var totalPrice = (sach.DonGia ?? 0) * sach.SoLuongBan;
+                        <tr class="text-center align-middle">
+                            <td>
+                                <img src="@sach.HinhMinhHoa" alt="@sach.TenSach" class="img-thumbnail rounded" style="width: 100px; height: auto;" />
+                            </td>
+                            <td>@sach.TenSach</td>
+                            <td>@String.Format("{0:C}", sach.DonGia)</td>
+                            <td>
+                                <form asp-action="UpdateCart" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@sach.MaSach" />
+                                    <input type="number" name="quantity" value="@sach.SoLuongBan" min="1" class="form-control d-inline-block rounded" style="width: 80px;" />
+                                    <button type="submit" class="btn btn-primary mt-1 rounded">Cập nhật</button>
+                                </form>
+                            </td>
+                            <td>@String.Format("{0:C}", totalPrice)</td>
+                            <td>
+                                <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@sach.MaSach" />
+                                    <button type="submit" class="btn btn-danger mt-1 rounded">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-end mb-3">
+            <h4>Tổng phụ: <strong>@ViewBag.Subtotal.ToString("C")</strong></h4>
+            <h4>Phí giao hàng: <strong>@ViewBag.DeliveryCharge.ToString("C")</strong></h4>
+            <h4>Tổng cộng: <strong>@ViewBag.Total.ToString("C")</h4>
+        </div>
+
+        <div class="text-center">
+            <form asp-action="Checkout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-success btn-lg rounded">Đặt hàng</button>
+            </form>
+            <a asp-action="BookList" class="btn btn-secondary btn-lg ms-3 rounded">Tiếp tục mua sắm</a>
+        </div>
+    }
+</div>
+
+<style>
+    .table-rounded {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+        .table-rounded th, .table-rounded td {
+            border: none;
+        }
+
+    .img-thumbnail.rounded {
+        border-radius: 15px;
+    }
+
+    .btn.rounded {
+        border-radius: 15px;
+    }
+
+    .form-control.rounded {
+        border-radius: 10px;
+    }
+
+    .btn-lg.rounded {
+        border-radius: 20px;
+    }
+</style>

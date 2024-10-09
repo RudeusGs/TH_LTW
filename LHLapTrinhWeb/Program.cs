@@ -8,7 +8,6 @@ namespace LHLapTrinhWeb
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Thêm DbContext với SqlServer
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -17,17 +16,15 @@ namespace LHLapTrinhWeb
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-            // Thêm dịch vụ Session
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian timeout của session
-                options.Cookie.HttpOnly = true; // Chỉ cho phép truy cập cookie qua HTTP
-                options.Cookie.IsEssential = true; // Cookie này cần thiết cho ứng dụng
+                options.IdleTimeout = TimeSpan.FromMinutes(30); 
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             var app = builder.Build();
 
-            // Cấu hình HTTP request pipeline
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -39,7 +36,6 @@ namespace LHLapTrinhWeb
 
             app.UseRouting();
 
-            // Sử dụng Session
             app.UseSession();
 
             app.UseAuthorization();

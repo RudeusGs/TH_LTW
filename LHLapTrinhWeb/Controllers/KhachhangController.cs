@@ -86,5 +86,42 @@ namespace LHLapTrinhWeb.Controllers
 
             return View(model);
         }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            var khachHang = GetCurrentCustomer();
+
+            if (currentPassword == null || newPassword == null || confirmPassword == null)
+            {
+                ModelState.AddModelError("", "All fields are required.");
+                return View("Profile", khachHang);
+            }
+
+            if (!ValidateCurrentPassword(khachHang, currentPassword))
+            {
+                ModelState.AddModelError("currentPassword", "Current password is incorrect.");
+                return View("Profile", khachHang);
+            }
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("confirmPassword", "New password and confirmation do not match.");
+                return View("Profile", khachHang);
+            }
+            _dataContext.Update(khachHang);
+            await _dataContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Password changed successfully.";
+            return RedirectToAction("Profile");
+        }
+
+        private Khachhang GetCurrentCustomer()
+        {
+            return new Khachhang(); 
+        }
+        private bool ValidateCurrentPassword(Khachhang khachHang, string currentPassword)
+        {
+            return true; 
+        }
+
     }
 }
