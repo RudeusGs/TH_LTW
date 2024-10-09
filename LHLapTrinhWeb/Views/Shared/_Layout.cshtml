@@ -1,9 +1,9 @@
 ﻿@using LHLapTrinhWeb.Controllers
 @using LHLapTrinhWeb.Models
 @using Microsoft.AspNetCore.Http;
-@* @{
-    var sachList = ViewData["SachList"] as IEnumerable<Sach>;
-} *@
+@{
+    var userName = Context.Session.GetString("UserName");
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +18,7 @@
 <body>
     <nav class="navbar navbar-expand-md bg-body-tertiary">
         <div class="container-xl">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" asp-area="" asp-controller="Sach" asp-action="BookList">
                 <img src="~/image/LogoWebsite.png" alt="">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,16 +52,21 @@
                         <form class="d-flex mb-2 me-2" role="search">
                             <input class="form-control me-2" style="width: 400px;" type="search" aria-label="Search">
                         </form>
-                        <div class="user-icons d-flex align-items-center">
-                            <div class="cart me-3"><i class="fas fa-bell"></i></div>
-                            <div class="cart me-3"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="wishlist me-3"><i class="fas fa-heart"></i></div>
+                        <div class="user-icons d-flex align-items-center ms-auto">
+                            <div class="cart me-4"><i class="fas fa-bell"></i></div>
+                            @if (Context.Session.GetString("UserName") != null)
+                            {
+                                <a asp-area="" asp-controller="Sach" asp-action="ShoppingCart" class="text-dark cart me-4">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                            }
+                            <div class="wishlist me-4"><i class="fas fa-heart"></i></div>
                             <div class="profile d-flex align-items-center">
                                 @if (Context.Session.GetString("UserName") != null)
                                 {
                                     <div class="d-flex align-items-center border rounded p-2 bg-light me-2">
-                                        <a asp-controller="Khachhang" asp-action="Profile" class="text-dark">
-                                            <span class="me-2">@Context.Session.GetString("UserName")</span>
+                                        <a asp-controller="Khachhang" style="text-decoration: none" asp-action="Profile" class="text-dark">
+                                            <span class="me-2 justify-content-center">@($"{userName}")</span>
                                         </a>
                                     </div>
 
@@ -80,6 +85,7 @@
                             </div>
                         </div>
                     </div>
+
                 </ul>
                 <div class="contact-info d-md-flex">
                     <p>+0392822440 | ngotrannguyenquan1908@gmail.com</p>

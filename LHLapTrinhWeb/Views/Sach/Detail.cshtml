@@ -1,26 +1,26 @@
 ﻿@model LHLapTrinhWeb.Models.Sach
 
 <div class="container my-5">
-    <div class="card details-card p-0">
-        <div class="row">
-            <div class="col-md-6 col-sm-12 d-flex justify-content-center">
-                <img class="img-fluid details-img" src="@Url.Content($"~/image/Sach/{Model.HinhMinhHoa}")" alt="@Model.TenSach">
+    <div class="card details-card shadow-sm p-0">
+        <div class="row g-0">
+            <div class="col-md-6 col-sm-12 d-flex justify-content-center align-items-center p-3">
+                <img class="img-fluid details-img rounded" src="@Url.Content($"~/image/Sach/{Model.HinhMinhHoa}")" alt="@Model.TenSach">
             </div>
 
             <div class="col-md-6 col-sm-12 description-container p-5">
                 <div class="main-description">
-                    <p class="product-category mb-0">@Model.MaCdNavigation?.TenChuDe</p>
+                    <p class="product-category mb-1 text-muted">@Model.MaCdNavigation?.TenChuDe</p>
                     <h3>@Model.TenSach</h3>
                     <hr>
-                    <p class="product-price">@Model.DonGia?.ToString("C")</p>
-                    <form class="add-inputs" method="post">
-                        <input type="number" class="form-control" id="cart_quantity" name="cart_quantity" value="1" min="1" max="10">
-                        <button name="add_to_cart" type="submit" class="btn btn-primary btn-lg">Add to cart</button>
+                    <p class="product-price text-primary">@Model.DonGia?.ToString("C")</p>
+                    <form asp-action="AddToCart" method="post" class="d-flex align-items-center mb-3">
+                        <input type="hidden" name="id" value="@Model.MaSach" />
+                        <input type="number" name="quantity" value="1" min="1" max="10" class="form-control me-3" style="width: 80px;" />
+                        <button type="submit" class="btn btn-success">Add to Cart</button>
                     </form>
-                    <form class="add-inputs" method="post">
-                        <button name="add_to_wishlist" type="submit" class="btn btn-primary btn-lg">Add to Wishlist</button>
+                    <form method="post" class="d-inline">
+                        <button name="add_to_wishlist" type="submit" class="btn btn-warning btn-lg mb-3">Add to Wishlist</button>
                     </form>
-                    <div style="clear:both"></div>
 
                     <hr>
 
@@ -30,16 +30,17 @@
                     <hr>
 
                     <p class="product-title mt-4 mb-1">Share this product</p>
-                    <ul class="social-list">
-                        <li><a href="#"><i class="fa-brands fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa-brands fa-square-instagram"></i></a></li>
+                    <ul class="social-list d-flex list-unstyled">
+                        <li><a href="#"><i class="fa-brands fa-facebook text-primary"></i></a></li>
+                        <li><a href="#"><i class="fa-brands fa-twitter text-info"></i></a></li>
+                        <li><a href="#"><i class="fa-brands fa-square-instagram text-danger"></i></a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <style>
 
     * {
@@ -49,76 +50,41 @@
     .details-card {
         width: 80%;
         margin: auto;
+        border: none;
     }
-
 
     .description-container {
         position: relative;
     }
 
     .details-img {
-        max-width: 100%; 
-        height: auto; 
-        display: block; 
+        max-width: 100%;
+        height: auto;
+        display: block;
         margin: 0 auto;
-    }
-
-    .main-description1 {
-        position: absolute;
-        top: 50%;
-        -webkit-transform: translateY(-50%);
-        -ms-transform: translateY(-50%);
-        transform: translateY(-50%);
     }
 
     .main-description h3 {
         font-size: 2rem;
+        font-weight: bold;
     }
-
-    .add-inputs,
-    .add-inputs input {
-        float: left;
-        margin-right: 10px;
-        margin-bottom: 2px;
-    }
-
-        .add-inputs button {
-            border-radius: 0;
-        }
-
-        .add-inputs input {
-            height: 48px;
-            width: 65px;
-            border-radius: 0;
-        }
-
 
     .product-title {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         font-weight: bold;
     }
 
     .product-price {
         font-size: 1.8rem;
+        font-weight: bold;
     }
 
-    .social-list {
-        padding: 0;
-        list-style: none;
+    .social-list li {
+        margin-right: 15px;
     }
 
-        .social-list li {
-            float: left;
-            padding: 6px 8px;
-            margin-right: 12px;
+        .social-list li a {
+            color: inherit;
+            font-size: 1.5rem;
         }
-
-            .social-list li a {
-                color: black;
-                font-size: 2rem;
-            }
-
-                .social-list li a i {
-                    font-size: 2rem;
-                }
 </style>
