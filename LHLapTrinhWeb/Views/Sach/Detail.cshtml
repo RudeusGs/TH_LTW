@@ -1,25 +1,25 @@
 ﻿@model LHLapTrinhWeb.Models.Sach
 
 <div class="container my-5">
-    <div class="card details-card shadow-sm p-0">
+    <div class="card details-card shadow-lg p-0 rounded-lg overflow-hidden">
         <div class="row g-0">
-            <div class="col-md-6 col-sm-12 d-flex justify-content-center align-items-center p-3">
-                <img class="img-fluid details-img rounded" src="@Url.Content($"~/image/Sach/{Model.HinhMinhHoa}")" alt="@Model.TenSach">
+            <div class="col-md-7 col-sm-12 d-flex justify-content-center align-items-center p-3 bg-light">
+                <img class="img-fluid details-img rounded" src="@Url.Content($"~/image/Sach/{Model.HinhMinhHoa}")" alt="@Model.TenSach" style="max-height: 500px; object-fit: contain;">
             </div>
 
-            <div class="col-md-6 col-sm-12 description-container p-5">
+            <div class="col-md-5 col-sm-12 description-container p-5">
                 <div class="main-description">
                     <p class="product-category mb-1 text-muted">@Model.MaCdNavigation?.TenChuDe</p>
-                    <h3>@Model.TenSach</h3>
+                    <h3 class="product-title text-dark">@Model.TenSach</h3>
                     <hr>
-                    <p class="product-price text-primary">@Model.DonGia?.ToString("C")</p>
+                    <p class="product-price text-success">@Model.DonGia?.ToString("C")</p>
                     <form asp-action="AddToCart" method="post" class="d-flex align-items-center mb-3">
                         <input type="hidden" name="id" value="@Model.MaSach" />
-                        <input type="number" name="quantity" value="1" min="1" max="10" class="form-control me-3" style="width: 80px;" />
-                        <button type="submit" class="btn btn-success">Add to Cart</button>
+                        <input type="number" name="quantity" value="1" min="1" max="10" class="form-control me-3 rounded-pill" style="width: 80px;" />
+                        <button type="submit" class="btn btn-success rounded-pill">Add to Cart</button>
                     </form>
                     <form method="post" class="d-inline">
-                        <button name="add_to_wishlist" type="submit" class="btn btn-warning btn-lg mb-3">Add to Wishlist</button>
+                        <button name="add_to_wishlist" type="submit" class="btn btn-warning btn-lg rounded-pill mb-3">Add to Wishlist</button>
                     </form>
 
                     <hr>
@@ -42,7 +42,6 @@
 </div>
 
 <style>
-
     * {
         box-sizing: border-box;
     }
@@ -62,21 +61,29 @@
         height: auto;
         display: block;
         margin: 0 auto;
+        border-radius: 15px;
+        transition: transform 0.3s ease-in-out;
     }
 
+        .details-img:hover {
+            transform: scale(1.05);
+        }
+
     .main-description h3 {
-        font-size: 2rem;
+        font-size: 2.8rem;
         font-weight: bold;
+        color: #343a40;
     }
 
     .product-title {
-        font-size: 1.3rem;
+        font-size: 1.7rem;
         font-weight: bold;
     }
 
     .product-price {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
         font-weight: bold;
+        color: #28a745;
     }
 
     .social-list li {
@@ -85,6 +92,14 @@
 
         .social-list li a {
             color: inherit;
-            font-size: 1.5rem;
+            font-size: 2rem;
         }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    }
 </style>

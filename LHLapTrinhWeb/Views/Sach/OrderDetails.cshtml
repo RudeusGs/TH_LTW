@@ -1,0 +1,126 @@
+﻿@model LHLapTrinhWeb.Models.Dondathang
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="container py-5">
+    <h1 class="text-center mb-5">@ViewData["Title"]</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center">
+            <strong>@TempData["SuccessMessage"]</strong>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-lg rounded-lg">
+                <div class="card-body">
+                    <h4 class="card-title mb-4 text-primary">Thông tin đơn hàng</h4>
+
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th class="bg-light">Tên người nhận:</th>
+                                <td>@Model.TenNguoiNhan</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Địa chỉ nhận:</th>
+                                <td>@Model.DiaChiNhan</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Số điện thoại:</th>
+                                <td>@Model.DienThoaiNhan</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Ngày đặt hàng:</th>
+                                <td>@Model.NgayDh?.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Tổng tiền:</th>
+                                <td>@String.Format("{0:C}", Model.TriGia)</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Ngày giao hàng dự kiến:</th>
+                                <td>@Model.NgayGiaoHang?.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <hr />
+
+                    <h5 class="mb-4 text-success">Chi tiết sản phẩm</h5>
+                    <ul class="list-group">
+                        @foreach (var item in Model.Ctdathangs)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <strong>@item.MaSachNavigation.TenSach</strong><br />
+                                        <small>Số lượng: @item.SoLuong</small><br />
+                                        <small>Đơn giá: @String.Format("{0:C}", item.DonGia)</small>
+                                    </div>
+                                    <div>
+                                        <strong>Thành tiền: @String.Format("{0:C}", item.ThanhTien)</strong>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="d-flex justify-content-center mt-4">
+                        <a asp-action="BookList" class="btn btn-primary rounded-pill px-4 py-2">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .table {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+        th.bg-light {
+            background-color: #f8f9fa;
+        }
+
+    .list-group-item {
+        border-radius: 15px;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 1rem;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+</style>
