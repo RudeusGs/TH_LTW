@@ -1,6 +1,5 @@
 ﻿using LHLapTrinhWeb.Models;
 using LHLapTrinhWeb.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -100,6 +99,21 @@ public class SachController : Controller
         SaveCartSession(cart);
         return RedirectToAction("ShoppingCart");
     }
+    public async Task<IActionResult> OrderDetails(int id)
+    {
+        var order = await _dataContext.Dondathangs
+            .Include(o => o.Ctdathangs)
+            .ThenInclude(c => c.MaSachNavigation)
+            .Include(o => o.MaKhNavigation)
+            .FirstOrDefaultAsync(o => o.SoDh == id);
+
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        return View(order);
+    }
 
 
     [HttpPost]
@@ -169,9 +183,48 @@ public class SachController : Controller
             return RedirectToAction("ShoppingCart");
         }
 
+        var khachHang = GetCurrentCustomer();
+        if (khachHang == null)
+        {
+            TempData["ErrorMessage"] = "Không tìm thấy khách hàng.";
+            return RedirectToAction("ShoppingCart");
+        }
+        var newOrder = new Dondathang
+        {
+            MaKh = khachHang.MaKh,
+            NgayDh = DateTime.Now,
+            TriGia = cart.Sum(item => _dataContext.Saches.Find(item.Key).DonGia * item.Value),
+            NgayGiaoHang = DateTime.Now.AddDays(3),
+            TenNguoiNhan = khachHang.HoTenKh,
+            DiaChiNhan = khachHang.DiaChiKh,
+            DienThoaiNhan = khachHang.DienThoaiKh,
+            DaGiao = false,
+            HtthanhToan = false,
+            HtgiaoHang = false
+        };
+
+        _dataContext.Dondathangs.Add(newOrder);
+        await _dataContext.SaveChangesAsync();
+        foreach (var item in cart)
+        {
+            var sach = await _dataContext.Saches.FindAsync(item.Key);
+            var orderDetail = new Ctdathang
+            {
+                SoDh = newOrder.SoDh,
+                MaSach = sach.MaSach,
+                SoLuong = item.Value,
+                DonGia = sach.DonGia,
+                ThanhTien = sach.DonGia * item.Value
+            };
+            _dataContext.Ctdathangs.Add(orderDetail);
+        }
+
+        await _dataContext.SaveChangesAsync();
+
         HttpContext.Session.Remove(CartSessionKey);
-        TempData["SuccessMessage"] = "Đặt hàng thành công!";
-        return RedirectToAction("BookList");
+        TempData["SuccessMessage"] = "Đặt hàng thành công! Đơn hàng của bạn sẽ được xử lý trong thời gian sớm nhất.";
+        return RedirectToAction("OrderDetails", new { id = newOrder.SoDh });
+
     }
 
 }

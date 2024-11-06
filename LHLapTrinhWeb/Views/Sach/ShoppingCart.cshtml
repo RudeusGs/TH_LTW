@@ -4,97 +4,111 @@
     ViewData["Title"] = "Giỏ hàng";
 }
 
-<div class="container mt-5">
-    <h1 class="text-center">@ViewData["Title"]</h1>
+<div class="container py-5">
+    <h1 class="text-center mb-5">@ViewData["Title"]</h1>
 
     @if (Model == null || !Model.Any())
     {
         <div class="alert alert-info text-center">
-            Giỏ hàng của bạn đang trống.
+            <h4 class="fw-bold">Giỏ hàng của bạn đang trống.</h4>
+            <a asp-action="BookList" class="btn btn-primary mt-3">Tiếp tục mua sắm</a>
         </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-rounded">
-                <thead class="table-primary">
-                    <tr class="text-center">
-                        <th>Ảnh</th>
-                        <th>Tên sách</th>
-                        <th>Đơn giá</th>
-                        <th>Số lượng</th>
-                        <th>Tổng</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var sach in Model)
-                    {
-                        var totalPrice = (sach.DonGia ?? 0) * sach.SoLuongBan;
-                        <tr class="text-center align-middle">
-                            <td>
-                                <img src="@sach.HinhMinhHoa" alt="@sach.TenSach" class="img-thumbnail rounded" style="width: 100px; height: auto;" />
-                            </td>
-                            <td>@sach.TenSach</td>
-                            <td>@String.Format("{0:C}", sach.DonGia)</td>
-                            <td>
-                                <form asp-action="UpdateCart" method="post" class="d-inline">
-                                    <input type="hidden" name="id" value="@sach.MaSach" />
-                                    <input type="number" name="quantity" value="@sach.SoLuongBan" min="1" class="form-control d-inline-block rounded" style="width: 80px;" />
-                                    <button type="submit" class="btn btn-primary mt-1 rounded">Cập nhật</button>
-                                </form>
-                            </td>
-                            <td>@String.Format("{0:C}", totalPrice)</td>
-                            <td>
-                                <form asp-action="RemoveFromCart" method="post" class="d-inline">
-                                    <input type="hidden" name="id" value="@sach.MaSach" />
-                                    <button type="submit" class="btn btn-danger mt-1 rounded">Xóa</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <div class="text-end mb-3">
-            <h4>Tổng phụ: <strong>@ViewBag.Subtotal.ToString("C")</strong></h4>
-            <h4>Phí giao hàng: <strong>@ViewBag.DeliveryCharge.ToString("C")</strong></h4>
-            <h4>Tổng cộng: <strong>@ViewBag.Total.ToString("C")</h4>
-        </div>
-
-        <div class="text-center">
-            <form asp-action="Checkout" method="post" class="d-inline">
-                <button type="submit" class="btn btn-success btn-lg rounded">Đặt hàng</button>
-            </form>
-            <a asp-action="BookList" class="btn btn-secondary btn-lg ms-3 rounded">Tiếp tục mua sắm</a>
+        <div class="row">
+            <div class="col-lg-8">
+                @foreach (var sach in Model)
+                {
+                    var totalPrice = (sach.DonGia ?? 0) * sach.SoLuongBan;
+                    <div class="cart-item mb-4 p-4 shadow-lg rounded bg-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 text-center">
+                                <img src="@Url.Content("~/image/Sach/" + sach.HinhMinhHoa)" alt="@sach.TenSach" class="img-fluid rounded" style="max-height: 200px; object-fit: cover;" />
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="fw-bold">@sach.TenSach</h5>
+                                <p class="text-muted">Mua sách</p>
+                                <h6 class="text-primary">@String.Format("{0:C}", sach.DonGia)</h6>
+                                @if (sach.SoLuongBan > 0)
+                                {
+                                    <span class="badge bg-success">Còn hàng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Hết hàng</span>
+                                }
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <form asp-action="UpdateCart" method="post" class="d-flex align-items-center">
+                                        <input type="hidden" name="id" value="@sach.MaSach" />
+                                        <input type="number" name="quantity" value="@sach.SoLuongBan" min="1" class="form-control me-2 rounded-pill" style="width: 80px;" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill">Cập nhật</button>
+                                    </form>
+                                    <form asp-action="RemoveFromCart" method="post">
+                                        <input type="hidden" name="id" value="@sach.MaSach" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">Xóa</button>
+                                    </form>
+                                </div>
+                                <div class="mt-2">
+                                    <strong>Tổng: @String.Format("{0:C}", totalPrice)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-4">
+                <div class="bg-light p-4 rounded shadow-lg sticky-top" style="top: 20px;">
+                    <h4 class="mb-4">Tóm tắt đơn hàng</h4>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tổng phụ:</span>
+                        <span>@ViewBag.Subtotal.ToString("C")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí giao hàng:</span>
+                        <span>@ViewBag.DeliveryCharge.ToString("C")</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold">Tổng cộng:</span>
+                        <span class="fw-bold">@ViewBag.Total.ToString("C")</span>
+                    </div>
+                    <form asp-action="Checkout" method="post">
+                        <button type="submit" class="btn btn-success w-100 rounded-pill">Đặt hàng</button>
+                    </form>
+                    <a asp-action="BookList" class="btn btn-secondary w-100 mt-3 rounded-pill">Tiếp tục mua sắm</a>
+                </div>
+            </div>
         </div>
     }
 </div>
 
 <style>
-    .table-rounded {
-        border-radius: 15px;
-        overflow: hidden;
+    .cart-item:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
 
-        .table-rounded th, .table-rounded td {
-            border: none;
-        }
-
-    .img-thumbnail.rounded {
-        border-radius: 15px;
-    }
-
-    .btn.rounded {
-        border-radius: 15px;
-    }
-
-    .form-control.rounded {
+    .cart-item img {
         border-radius: 10px;
     }
 
-    .btn-lg.rounded {
-        border-radius: 20px;
+    .btn-outline-primary, .btn-outline-danger {
+        font-size: 0.8rem;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175) !important;
     }
 </style>
