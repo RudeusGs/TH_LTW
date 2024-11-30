@@ -1,0 +1,65 @@
+﻿@model LHLapTrinhWeb.Models.Sach
+
+@{
+    ViewBag.Title = "Thêm mới Sách";
+}
+
+<h2 class="text-center">Thêm mới Sách</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="col-md-6 offset-md-3">
+    <div class="form-group">
+        <label asp-for="TenSach">Tên Sách</label>
+        <input asp-for="TenSach" class="form-control" required />
+        <span asp-validation-for="TenSach" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DonViTinh">Đơn Vị Tính</label>
+        <input asp-for="DonViTinh" class="form-control" />
+        <span asp-validation-for="DonViTinh" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DonGia">Đơn Giá</label>
+        <input asp-for="DonGia" type="number" step="0.01" class="form-control" required />
+        <span asp-validation-for="DonGia" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MoTa">Mô Tả</label>
+        <textarea asp-for="MoTa" class="form-control"></textarea>
+        <span asp-validation-for="MoTa" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="HinhMinhHoa">Hình Minh Họa</label>
+        <input asp-for="HinhMinhHoa" type="file" class="form-control-file" accept=".png, .jpg, .jpeg" />
+        <span asp-validation-for="HinhMinhHoa" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="MaCd">Chủ Đề</label>
+        <select asp-for="MaCd" asp-items="ViewBag.ChuDes" class="form-control">
+            <option value="">-- Chọn Chủ Đề --</option>
+        </select>
+        <span asp-validation-for="MaCd" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MaNxb">Nhà Xuất Bản</label>
+        <select asp-for="MaNxb" asp-items="ViewBag.NhaXuatBans" class="form-control">
+            <option value="">-- Chọn Nhà Xuất Bản --</option>
+        </select>
+        <span asp-validation-for="MaNxb" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -46,59 +46,21 @@
         </div>
     </div>
 </div>
-<div class="container mt-5">
-    <div class="row text-center">
-        <div class="col">
-            <img src="./image/icon1.png" alt="Icon 1" class="img-fluid">
-            <p>MCBooks</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon2.png" alt="Icon 2" class="img-fluid">
-            <p>MCBooks</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon3.png" alt="Icon 3" class="img-fluid">
-            <p>Balo</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon4.png" alt="Icon 4" class="img-fluid">
-            <p>Sản phẩm</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon5.png" alt="Icon 5" class="img-fluid">
-            <p>Manga</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon6.png" alt="Icon 6" class="img-fluid">
-            <p>Flash Sale</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon7.png" alt="Icon 7" class="img-fluid">
-            <p>Mã giảm giá</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon8.png" alt="Icon 8" class="img-fluid">
-            <p>Back to school</p>
-        </div>
-        <div class="col">
-            <img src="./image/icon9.png" alt="Icon 9" class="img-fluid">
-            <p>Phiên chợ</p>
-        </div>
-    </div>
-</div>
 
 <div class="container mt-5">
-    <h3 class="text-center mt-3">@if (hasSelectedTopic)
+    <h3 class="text-center mt-3">
+        @if (hasSelectedTopic)
         {
             <span>Sách theo chủ đề</span>
         }
         else
         {
             <span>Sách bán chạy</span>
-        }</h3>
+        }
+    </h3>
 
     <div class="row justify-content-center">
-        @foreach (var sach in Model.Take(6))
+        @foreach (var sach in Model)
         {
             <div class="col-md-4 mb-4 d-flex justify-content-center">
                 <div class="card h-100 shadow-lg rounded-lg" style="width: 100%; max-width: 447px; background-color: #fdfdff;">
@@ -123,7 +85,39 @@
             </div>
         }
     </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <nav>
+            <ul class="pagination">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("BookList", new { page = ViewBag.CurrentPage - 1 })" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @if (i == ViewBag.CurrentPage) {
+                <text>active</text>
+ }">
+                        <a class="page-link" href="@Url.Action("BookList", new { page = i })">@i</a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("BookList", new { page = ViewBag.CurrentPage + 1 })" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>
+
 <style>
     .card {
         transition: transform 0.3s, box-shadow 0.3s;

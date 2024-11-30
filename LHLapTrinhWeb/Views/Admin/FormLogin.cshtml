@@ -1,4 +1,4 @@
-﻿@model LHLapTrinhWeb.Models.Khachhang
+﻿@model LHLapTrinhWeb.Models.Admin
 
 @{
     ViewData["Title"] = "Đăng Nhập";
@@ -15,13 +15,13 @@
                     <form asp-action="Login" method="post">
                         <div class="mb-4">
                             <label for="TenDn" class="form-label">Username/Email</label>
-                            <input type="text" asp-for="TenDn" class="form-control" id="TenDn" required />
-                            <span asp-validation-for="TenDn" class="text-danger"></span>
+                            <input type="text" asp-for="TenDnadmin" class="form-control" id="TenDn" required />
+                            <span asp-validation-for="TenDnadmin" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label for="MatKhau" class="form-label">Password</label>
-                            <input type="password" asp-for="MatKhau" class="form-control" id="MatKhau" required />
-                            <span asp-validation-for="MatKhau" class="text-danger"></span>
+                            <input type="password" asp-for="MatKhauAdmin" class="form-control" id="MatKhau" required />
+                            <span asp-validation-for="MatKhauAdmin" class="text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <input type="checkbox" class="form-check-input" id="remember" />
@@ -36,8 +36,7 @@
         </div>
     </div>
 </div>
- <a asp-area="" class="d-flex justify-content-center" asp-controller="Admin" asp-action="FormLogin" class="text-dark cart me-4">Đăng nhập bằng admin</a>
-
+<a asp-area="" class="d-flex justify-content-center" asp-controller="Khachhang" asp-action="FormLogin" class="text-dark cart me-4">Đăng nhập bằng user</a>
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
