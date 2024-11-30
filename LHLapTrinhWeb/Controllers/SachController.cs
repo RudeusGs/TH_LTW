@@ -1,8 +1,12 @@
-﻿using LHLapTrinhWeb.Models;
+﻿using LHLapTrinhWeb.Filters;
+using LHLapTrinhWeb.Models;
 using LHLapTrinhWeb.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.IO;
+using System.Threading.Tasks;
 
 public class SachController : Controller
 {
@@ -14,11 +18,15 @@ public class SachController : Controller
         _dataContext = dataContext;
     }
 
-    public async Task<IActionResult> BookList(bool isTopicSelected, int? MaCd = null, int? MaNxb = null)
+    public async Task<IActionResult> BookList(bool isTopicSelected, int? MaCd = null, int? MaNxb = null, int page = 1)
     {
-        IQueryable<Sach> query = _dataContext.Saches.Include(s => s.MaCdNavigation).Include(s => s.MaNxbNavigation);
-        ViewBag.HasSelectedTopic = isTopicSelected;
+        int pageSize = 12;
 
+        IQueryable<Sach> query = _dataContext.Saches
+            .Include(s => s.MaCdNavigation)
+            .Include(s => s.MaNxbNavigation);
+
+        ViewBag.HasSelectedTopic = isTopicSelected;
         if (MaCd.HasValue)
         {
             query = query.Where(s => s.MaCd == MaCd.Value);
@@ -28,10 +36,18 @@ public class SachController : Controller
         {
             query = query.Where(s => s.MaNxb == MaNxb.Value);
         }
+        var totalBooks = await query.CountAsync();
+        var books = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        var totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
 
-        var books = await query.ToListAsync();
         return View(books);
     }
+
 
     public IActionResult Detail(int id)
     {
@@ -64,6 +80,7 @@ public class SachController : Controller
 
         return View(cartItems);
     }
+
     private Khachhang GetCurrentCustomer()
     {
         var username = HttpContext.Session.GetString("UserName");
@@ -99,11 +116,12 @@ public class SachController : Controller
         SaveCartSession(cart);
         return RedirectToAction("ShoppingCart");
     }
+
     public async Task<IActionResult> OrderDetails(int id)
     {
         var order = await _dataContext.Dondathangs
             .Include(o => o.Ctdathangs)
-            .ThenInclude(c => c.MaSachNavigation)
+                .ThenInclude(c => c.MaSachNavigation)
             .Include(o => o.MaKhNavigation)
             .FirstOrDefaultAsync(o => o.SoDh == id);
 
@@ -114,7 +132,6 @@ public class SachController : Controller
 
         return View(order);
     }
-
 
     [HttpPost]
     public IActionResult UpdateCart(int id, int quantity)
@@ -189,6 +206,7 @@ public class SachController : Controller
             TempData["ErrorMessage"] = "Không tìm thấy khách hàng.";
             return RedirectToAction("ShoppingCart");
         }
+
         var newOrder = new Dondathang
         {
             MaKh = khachHang.MaKh,
@@ -205,18 +223,22 @@ public class SachController : Controller
 
         _dataContext.Dondathangs.Add(newOrder);
         await _dataContext.SaveChangesAsync();
+
         foreach (var item in cart)
         {
             var sach = await _dataContext.Saches.FindAsync(item.Key);
-            var orderDetail = new Ctdathang
+            if (sach != null)
             {
-                SoDh = newOrder.SoDh,
-                MaSach = sach.MaSach,
-                SoLuong = item.Value,
-                DonGia = sach.DonGia,
-                ThanhTien = sach.DonGia * item.Value
-            };
-            _dataContext.Ctdathangs.Add(orderDetail);
+                var orderDetail = new Ctdathang
+                {
+                    SoDh = newOrder.SoDh,
+                    MaSach = sach.MaSach,
+                    SoLuong = item.Value,
+                    DonGia = sach.DonGia,
+                    ThanhTien = sach.DonGia * item.Value
+                };
+                _dataContext.Ctdathangs.Add(orderDetail);
+            }
         }
 
         await _dataContext.SaveChangesAsync();
@@ -224,7 +246,188 @@ public class SachController : Controller
         HttpContext.Session.Remove(CartSessionKey);
         TempData["SuccessMessage"] = "Đặt hàng thành công! Đơn hàng của bạn sẽ được xử lý trong thời gian sớm nhất.";
         return RedirectToAction("OrderDetails", new { id = newOrder.SoDh });
+    }
+    [AuthorizeRole("admin")]
+    public async Task<IActionResult> Index(int page = 1)
+    {
+        int pageSize = 20;
 
+        IQueryable<Sach> query = _dataContext.Saches
+            .Include(s => s.MaCdNavigation)
+            .Include(s => s.MaNxbNavigation);
+        var totalBooks = await query.CountAsync();
+        var books = await query
+            .Skip((page - 1) * pageSize) 
+            .Take(pageSize) 
+            .ToListAsync();
+        var totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
+
+        return View(books);
     }
 
+    [AuthorizeRole("admin")]
+    public IActionResult Create()
+    {
+        ViewBag.ChuDes = new SelectList(_dataContext.Chudes, "MaCd", "TenChuDe");
+        ViewBag.NhaXuatBans = new SelectList(_dataContext.Nhaxuatbans, "MaNxb", "TenNxb");
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeRole("admin")]
+    public async Task<IActionResult> Create(Sach sach, IFormFile hinhMinhHoa)
+    {
+        if (hinhMinhHoa != null)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var fileExtension = Path.GetExtension(hinhMinhHoa.FileName).ToLower();
+
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                ModelState.AddModelError("HinhMinhHoa", "Chỉ cho phép tải lên các tệp hình ảnh (.jpg, .jpeg, .png).");
+                return View(sach);
+            }
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", hinhMinhHoa.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await hinhMinhHoa.CopyToAsync(stream);
+            }
+            sach.HinhMinhHoa = "/images/" + hinhMinhHoa.FileName;
+        }
+
+        if (ModelState.IsValid)
+        {
+            _dataContext.Saches.Add(sach);
+            await _dataContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        return View(sach);
+    }
+
+
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null)
+            return NotFound();
+        var sach = await _dataContext.Saches.FindAsync(id);
+        if (sach == null)
+            return NotFound();
+
+        ViewBag.ChuDes = new SelectList(_dataContext.Chudes, "MaCd", "TenChuDe", sach.MaCd);
+        ViewBag.NhaXuatBans = new SelectList(_dataContext.Nhaxuatbans, "MaNxb", "TenNxb", sach.MaNxb);
+
+        return View(sach);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeRole("admin")]
+    public async Task<IActionResult> Edit(int id, Sach sach, IFormFile HinhMinhHoa)
+    {
+        if (id != sach.MaSach)
+            return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var existingSach = await _dataContext.Saches.FindAsync(id);
+                if (existingSach == null)
+                    return NotFound();
+                existingSach.TenSach = sach.TenSach;
+                existingSach.DonViTinh = sach.DonViTinh;
+                existingSach.DonGia = sach.DonGia;
+                existingSach.MoTa = sach.MoTa;
+                existingSach.MaCd = sach.MaCd;
+                existingSach.MaNxb = sach.MaNxb;
+                if (HinhMinhHoa != null && HinhMinhHoa.Length > 0)
+                {
+                    var fileName = Path.GetFileName(HinhMinhHoa.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/image/Sach", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await HinhMinhHoa.CopyToAsync(stream);
+                    }
+
+                    existingSach.HinhMinhHoa = fileName;
+                }
+
+                _dataContext.Update(existingSach);
+                await _dataContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SachExists(sach.MaSach))
+                    return NotFound();
+                else
+                    throw;
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        ViewBag.ChuDes = new SelectList(_dataContext.Chudes, "MaCd", "TenChuDe", sach.MaCd);
+        ViewBag.NhaXuatBans = new SelectList(_dataContext.Nhaxuatbans, "MaNxb", "TenNxb", sach.MaNxb);
+
+        return View(sach);
+    }
+    [AuthorizeRole("admin")]
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null)
+            return NotFound();
+
+        var sach = await _dataContext.Saches
+            .Include(s => s.MaCdNavigation)
+            .Include(s => s.MaNxbNavigation)
+            .FirstOrDefaultAsync(m => m.MaSach == id);
+        if (sach == null)
+            return NotFound();
+
+        return View(sach);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeRole("admin")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        try
+        {
+            var sach = await _dataContext.Saches
+                .Include(s => s.Ctdathangs)
+                .Include(s => s.Vietsaches)
+                .FirstOrDefaultAsync(s => s.MaSach == id);
+
+            if (sach == null)
+                return NotFound();
+            if (sach.Ctdathangs.Any())
+            {
+                _dataContext.Ctdathangs.RemoveRange(sach.Ctdathangs);
+            }
+            if (sach.Vietsaches.Any())
+            {
+                _dataContext.Vietsaches.RemoveRange(sach.Vietsaches);
+            }
+            _dataContext.Saches.Remove(sach);
+            await _dataContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Xóa sách thành công!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = "Đã xảy ra lỗi khi xóa sách. Vui lòng thử lại sau.";
+            return RedirectToAction("Delete", new { id });
+        }
+    }
+
+    private bool SachExists(int id)
+    {
+        return _dataContext.Saches.Any(e => e.MaSach == id);
+    }
 }

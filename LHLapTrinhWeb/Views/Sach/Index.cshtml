@@ -1,0 +1,59 @@
+﻿@model IEnumerable<LHLapTrinhWeb.Models.Sach>
+
+@{
+    ViewBag.Title = "Quản lý Sách";
+}
+
+<h2 class="text-center">Quản lý Sách</h2>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-success">Thêm mới Sách</a>
+</p>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã Sách</th>
+            <th>Tên Sách</th>
+            <th>Đơn Giá</th>
+            <th>Chủ Đề</th>
+            <th>Nhà Xuất Bản</th>
+            <th class="text-center">Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaSach</td>
+                <td>@item.TenSach</td>
+                <td>@String.Format("{0:C}", item.DonGia)</td>
+                <td>@item.MaCdNavigation?.TenChuDe</td>
+                <td>@item.MaNxbNavigation?.TenNxb</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Edit", new { id = item.MaSach })" class="btn btn-primary btn-sm">Sửa</a>
+                    <a href="@Url.Action("Delete", new { id = item.MaSach })" class="btn btn-danger btn-sm">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @if (ViewBag.CurrentPage > 1)
+    {
+        <a href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })" class="btn btn-secondary">Trang Trước</a>
+    }
+
+    @for (var i = 1; i <= ViewBag.TotalPages; i++)
+    {
+        <a href="@Url.Action("Index", new { page = i })" class="btn @((i == ViewBag.CurrentPage) ? "btn-primary" : "btn-secondary")">
+            @i
+        </a>
+    }
+
+    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+    {
+        <a href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })" class="btn btn-secondary">Trang Sau</a>
+    }
+</div>

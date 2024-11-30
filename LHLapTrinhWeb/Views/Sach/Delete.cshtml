@@ -1,0 +1,40 @@
+﻿@model LHLapTrinhWeb.Models.Sach
+
+@{
+    ViewBag.Title = "Xóa Sách";
+}
+
+<h2 class="text-center text-danger">Xóa Sách</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger text-center">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="alert alert-warning text-center">
+    <strong>Bạn có chắc chắn muốn xóa sách này không?</strong>
+</div>
+
+<div class="card col-md-6 offset-md-3">
+    <div class="card-body">
+        <h5 class="card-title">@Model.TenSach</h5>
+        <p class="card-text"><strong>Đơn Giá:</strong> @String.Format("{0:C}", Model.DonGia)</p>
+        <p class="card-text"><strong>Chủ Đề:</strong> @Model.MaCdNavigation?.TenChuDe</p>
+        <p class="card-text"><strong>Nhà Xuất Bản:</strong> @Model.MaNxbNavigation?.TenNxb</p>
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post" class="mt-3 text-center">
+    <input type="hidden" name="id" value="@Model.MaSach" />
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+</form>

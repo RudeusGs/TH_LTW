@@ -35,7 +35,6 @@ namespace LHLapTrinhWeb
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseSession();
 
             app.UseAuthorization();

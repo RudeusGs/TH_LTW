@@ -1,0 +1,45 @@
+﻿@model LHLapTrinhWeb.Models.Sach
+
+@{
+    ViewBag.Title = "Chỉnh sửa Sách";
+}
+
+<h2 class="text-center">Chỉnh sửa Sách</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="col-md-6 offset-md-3">
+    <input type="hidden" name="MaSach" value="@Model.MaSach" />
+    <div class="form-group">
+        <label for="TenSach">Tên Sách</label>
+        <input type="text" class="form-control" id="TenSach" name="TenSach" value="@Model.TenSach" required />
+    </div>
+    <div class="form-group">
+        <label for="DonViTinh">Đơn Vị Tính</label>
+        <input type="text" class="form-control" id="DonViTinh" name="DonViTinh" value="@Model.DonViTinh" />
+    </div>
+    <div class="form-group">
+        <label for="DonGia">Đơn Giá</label>
+        <input type="number" step="0.01" class="form-control" id="DonGia" name="DonGia" value="@Model.DonGia" required />
+    </div>
+    <div class="form-group">
+        <label for="MoTa">Mô Tả</label>
+        <textarea class="form-control" id="MoTa" name="MoTa">@Model.MoTa</textarea>
+    </div>
+    <div class="form-group">
+        <label for="HinhMinhHoa">Hình Minh Họa</label>
+        <input type="file" class="form-control-file" id="HinhMinhHoa" name="HinhMinhHoa" />
+        @if (!string.IsNullOrEmpty(Model.HinhMinhHoa))
+        {
+            <img src="@Url.Content("~/image/Sach/" + Model.HinhMinhHoa)" alt="Hình Minh Họa" class="img-thumbnail mt-2" width="150" />
+        }
+    </div>
+    <div class="form-group">
+        <label for="MaCd">Chủ Đề</label>
+        @Html.DropDownListFor(model => model.MaCd, ViewBag.ChuDes as SelectList, "Chọn Chủ Đề", new { @class = "form-control", @id = "MaCd" })
+    </div>
+    <div class="form-group">
+        <label for="MaNxb">Nhà Xuất Bản</label>
+        @Html.DropDownListFor(model => model.MaNxb, ViewBag.NhaXuatBans as SelectList, "Chọn Nhà Xuất Bản", new { @class = "form-control", @id = "MaNxb" })
+    </div>
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+</form>

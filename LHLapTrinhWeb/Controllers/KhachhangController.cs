@@ -31,8 +31,10 @@ namespace LHLapTrinhWeb.Controllers
                 if (customer != null)
                 {
                     HttpContext.Session.SetString("UserName", customer.TenDn);
+                    HttpContext.Session.SetString("UserRole", "user");
                     return RedirectToAction("BookList", "Sach");
                 }
+
                 ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng.");
             }
             ViewData["IsLoggedIn"] = false;
@@ -42,6 +44,7 @@ namespace LHLapTrinhWeb.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("UserRole");
             return RedirectToAction("FormLogin", "Khachhang");
         }
         public async Task<IActionResult> Profile()
